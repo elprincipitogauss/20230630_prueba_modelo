@@ -1,17 +1,14 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-slim
-
+# Use an official Python runtime as the base image
+FROM python:3.9
+# Set the working directory in the container
 WORKDIR /app
-
-COPY ./requirements.txt ./requirements.txt
-RUN pip3 install -r requirements.txt
-
-EXPOSE 8200
-
-RUN chmod -R -f 777 /app
-USER 1000
-
+# Copy the requirements.txt file to the container
+COPY requirements.txt .
+# Install the Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+# Copy the rest of the application files to the container
 COPY . .
-
-ENTRYPOINT gunicorn --bind :8200 --workers 2 main:app --worker-class uvicorn.workers.UvicornH11Worker --preload --timeout 60 --worker-tmp-dir /dev/shm
-
-
+# Expose a port (if required)
+EXPOSE 8000
+# Specify the command to run when the container starts
+CMD ["python", "app.py"]

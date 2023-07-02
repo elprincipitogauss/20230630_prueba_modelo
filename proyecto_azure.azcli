@@ -7,17 +7,19 @@
 # instalar CLI de azure
 # instalar para VSC extension de "Azure Developer CLI" y "Azure CLI Tools"
 
-# instalar wsl 
+# instalar wsl utilizando cmd
 wsl --list --online
 wsl --set-default-version 2
 wsl.exe --install -d Ubuntu # o instalar desde la tienda de microsoft
 # usando user001 y pass123 (se puede escoger credenciales a discresion)
-# instalar para VSC extension de "WSL"
+# instalar para VSC extension de "WSL" (en prueba)
+
+# instalar docker
+
 # en terminal el ubuntu wsl instalar docker 
 # primero actualizar paquetes
 sudo apt update
 
-# instalar docker
 # add the Docker repository, update the package lists, and then install Docker.
 sudo apt install apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -29,14 +31,15 @@ sudo usermod -aG docker $USER
 # para verificar version de docker instalada
 docker --version
 
-# instalar git local desde la pagina https://git-scm.com/download/win
+# instalar docker-compose en terminal de ubuntu
+sudo apt install docker-compose
+
+
+# instalar git en windows local desde la pagina https://git-scm.com/download/win
 # instalar git en wsl ubuntu desde la terminal
 sudo apt install git
 # para verificar version de Git instalada
 git --version
-# configurar git
-git config --global user.name "Your Name"
-
 
 # *********************************************
 # *** preparar git ***
@@ -50,6 +53,10 @@ git config --global user.email "your_email@example.com"
 
 # iniciar repositorio git en carpeta proyecto
 git init
+
+# clonar repositorio git en carpeta proyecto
+# git clone <remote_repository>
+git clone https://github.com/elprincipitogauss/proyecto_azure.git
 
 # verificar commits pendientes por subir
 git status
@@ -65,7 +72,7 @@ git branch -M main
 
 # subir al repositorio remoto <remote_repository>
 # git remote add origin <remote_repository>
-git remote add origin https://github.com/elprincipitogauss/pruebas_azure.git
+git remote add origin https://github.com/elprincipitogauss/proyecto_azure.git
 
 # push los commits realizados
 # git -u push origin <branch_name>
@@ -128,13 +135,9 @@ az acr login -n containerregammstest --expose-token
 # navigate to the directory containing the Dockerfile and Python script
 cd Consultoria\SIC\pruebas\20230630_prueba_modelo\tets\imagenes\test\
 docker build -t containerregammstest.azurecr.io/hello-world:latest .
-# Push the Docker image to Azure Container Registry
+# Push the Container Image to Azure Container Registry to store and manage it.
 # <acr_name> name of your Azure Container Registry
 docker push containerregammstest.azurecr.io/hello-world:latest
-
-
-
-# Push the Container Image to a Container Registry: ACR is a private Docker container registry in Azure. Push your container image to ACR to store and manage it. Create an Azure Container Registry instance in your resource group
 
 # Deploy the Model as a Kubernetes Deployment: Define a Kubernetes Deployment manifest that specifies the container image, desired replica count, and other deployment settings. Apply the deployment manifest to your AKS cluster to start the deployment.
 
@@ -144,6 +147,42 @@ docker push containerregammstest.azurecr.io/hello-world:latest
 
 # Configure Networking and Security: Ensure that your AKS cluster and API service are properly secured, and configure network policies, ingress rules, and any necessary firewall rules.
 
+
+
+# *********************************************
+# *** create container image ***
+# *********************************************
+
+# 1 - Create a file named Dockerfile in your project directory.
+
+# --------------------------------------------------------------
+# Use an official Python runtime as the base image
+FROM python:3.9
+# Set the working directory in the container
+WORKDIR /app
+# Copy the requirements.txt file to the container
+COPY requirements.txt .
+# Install the Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+# Copy the rest of the application files to the container
+COPY . .
+# Expose a port (if required)
+EXPOSE 8000
+# Specify the command to run when the container starts
+CMD ["python", "app.py"]
+# --------------------------------------------------------------
+
+
+# 2 - Copy the above Dockerfile content into the Dockerfile file.
+
+# 3 - Open a terminal or command prompt and navigate to your project directory containing the Dockerfile.
+# cd <directorio_proyecto>
+
+# 4 - Build the Docker image by running the following command:
+
+# 5 - Wait for Docker to build the image. It will execute the instructions in the Dockerfile, installing dependencies and setting up the container.
+
+# 6 - Once the build is complete, you can verify that the image is created by running:
 
 
 # *********************************************
